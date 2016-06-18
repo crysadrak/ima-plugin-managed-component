@@ -1,0 +1,27 @@
+{
+  "name": "ima-plugin-managed-component",
+  "version": "0.0.0",
+  "description": "Base class for React components (for IMA.js applications) with automatically managed DOM, event bus, dispatcher, timeout and interval listeners.",
+  "main": "dist/AbstractManagedComponent.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jurca/ima-plugin-managed-component.git"
+  },
+  "keywords": [
+    "ima",
+    "ima.js",
+    "plugin",
+    "react",
+    "component",
+    "automanagement"
+  ],
+  "author": "Martin Jurča <mjurca@centrum.cz>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jurca/ima-plugin-managed-component/issues"
+  },
+  "homepage": "https://github.com/jurca/ima-plugin-managed-component#readme"
+}
