@@ -43,14 +43,15 @@ export default (AbstractComponent) => {
 		 * @param {Object<string, *>} context Component's context.
 		 */
 		constructor(props, context) {
-			if (!context || !context.$Utils || !context.$Utils.$Dispatcher) {
-				throw new Error('The React context needs to be provided, ' +
-						'it must contain the view utils in the $Utils ' +
-						'property, and the view utils must contain the IMA ' +
-						'event dispatcher in the $Dispatcher property');
-			}
-
 			super(props, context);
+
+			if (!this.utils || !this.utils.$Dispatcher) {
+				throw new Error('The view utils must be provided to the ' +
+						'managed component either via props or context as ' +
+						'$Utils property. The property\'s value must be an ' +
+						'object with the IMA event dispatcher available ' +
+						'through the $Dispatcher property');
+			}
 
 			if ($Debug) {
 				if (
