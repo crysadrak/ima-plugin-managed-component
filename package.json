@@ -34,7 +34,6 @@
 		"babel-plugin-transform-es2015-modules-commonjs": "6.18.0",
 		"del": "2.2.2",
 		"gulp": "github:gulpjs/gulp#c120a94",
-		"gulp-babel": "6.1.2",
-		"run-sequence": "1.2.2"
+		"gulp-babel": "6.1.2"
 	}
 }
