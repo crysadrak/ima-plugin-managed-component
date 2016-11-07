@@ -94,7 +94,7 @@ export default class MyReactComponent extends AbstractManagedComponent {
 
 ## Implementation details
 
-The `AbstractManagedComponent` overrides, if necessary the
+The `AbstractManagedComponent` overrides, if necessary, the
 `componentWillUnmount` method, that executes the client code's overriding
 implementation first, and the `AbstractManagedComponent`'s after that for
 cleaning up the listeners, timeouts and intervals.
