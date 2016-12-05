@@ -1,5 +1,6 @@
 
 import AbstractComponent from 'ima/page/AbstractComponent';
+import ReactDOM from 'react-dom';
 
 /**
  * Private field symbols.
@@ -130,7 +131,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 */
 	addDomListener(eventTarget, eventName, listener) {
 		if (!eventTarget.addEventListener) {
-			eventTarget = this.findDOMNode(eventTarget);
+			eventTarget = ReactDOM.findDOMNode(eventTarget);
 		}
 
 		let realListener = this[PRIVATE.registerListener](
@@ -158,7 +159,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 */
 	removeDomListener(eventTarget, eventName, listener) {
 		if (!eventTarget.addEventListener) {
-			eventTarget = this.findDOMNode(eventTarget);
+			eventTarget = ReactDOM.findDOMNode(eventTarget);
 		}
 
 		let realListener = this[PRIVATE.deregisterListener](
@@ -453,7 +454,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	[PRIVATE.registerListener](listenerStorage, eventTarget, eventName,
 			listener) {
 		if (!eventTarget.addEventListener) {
-			eventTarget = this.findDOMNode(eventTarget);
+			eventTarget = ReactDOM.findDOMNode(eventTarget);
 		}
 
 		if (!listenerStorage.has(eventTarget)) {
@@ -497,7 +498,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	[PRIVATE.deregisterListener](listenerStorage, eventTarget, eventName,
 			listener) {
 		if (!eventTarget.addEventListener) {
-			eventTarget = this.findDOMNode(eventTarget);
+			eventTarget = ReactDOM.findDOMNode(eventTarget);
 		}
 
 		if (!listenerStorage.has(eventTarget)) {
