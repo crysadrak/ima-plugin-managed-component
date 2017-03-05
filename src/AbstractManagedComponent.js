@@ -14,6 +14,7 @@ const PRIVATE = {
 	dispatcherListeners: Symbol('dispatcherListeners'),
 	pendingTimeouts: Symbol('pendingTimeouts'),
 	activeIntervals: Symbol('activeIntervals'),
+	boundListeners: Symbol('boundListeners'),
 
 	// methods
 	registerListener: Symbol('registerListener'),
@@ -118,6 +119,16 @@ export default class AbstractManagedComponent extends AbstractComponent {
 		 * @type {Map<function(), number>}
 		 */
 		this[PRIVATE.activeIntervals] = new Map();
+
+		/**
+		 * Map of references to this component's event processing listeners to
+		 * their bound wrappers bound to this component's instance. This is
+		 * a cache for bound functions generated during binding of the event
+		 * listeners methods used in the render method.
+		 *
+		 * @type {Map<function(Event), function(Event)>}
+		 */
+		this[PRIVATE.boundListeners] = new Map();
 	}
 
 	/**
@@ -571,7 +582,15 @@ export default class AbstractManagedComponent extends AbstractComponent {
 				continue;
 			}
 
-			props[propertyName] = props[propertyName].bind(this);
+			let callback = props[propertyName];
+			let boundCallback;
+			if (this[PRIVATE.boundListeners].has(callback)) {
+				boundCallback = this[PRIVATE.boundListeners].get(callback);
+			} else {
+				boundCallback = callback.bind(this);
+				this[PRIVATE.boundListeners].set(callback, boundCallback);
+			}
+			props[propertyName] = boundCallback;
 		}
 
 		if (props.children instanceof Array) {
