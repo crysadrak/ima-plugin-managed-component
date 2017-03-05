@@ -1,6 +1,6 @@
 {
 	"name": "ima-plugin-managed-component",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"description": "Base class for React components (for IMA.js applications) with automatically managed DOM, event bus, dispatcher, timeout and interval listeners.",
 	"main": "AbstractManagedComponent.js",
 	"scripts": {
