@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
  *
  * @type {Object<string, symbol>}
  */
-const PRIVATE = Object.freeze({
+const PRIVATE = {
 	// fields
 	eventBusListeners: Symbol('eventBusListeners'),
 	domListeners: Symbol('domListeners'),
@@ -19,7 +19,10 @@ const PRIVATE = Object.freeze({
 	registerListener: Symbol('registerListener'),
 	deregisterListener: Symbol('deregisterListener'),
 	bindUiEventListeners: Symbol('bindUiEventListeners')
-});
+};
+if ($Debug) {
+	Object.freeze(PRIVATE);
+}
 
 /**
  * Abstract UI component that automatically manages the registered DOM, event
@@ -39,12 +42,16 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	constructor(props, context) {
 		super(props, context);
 
-		if (!this.utils || !this.utils.$Dispatcher) {
-			throw new Error('The view utils must be provided to the managed ' +
+		if ($Debug) {
+			if (!this.utils || !this.utils.$Dispatcher) {
+				throw new Error(
+					'The view utils must be provided to the managed ' +
 					'component either via props or context as $Utils ' +
 					'property. The property\'s value must be an object with ' +
 					'the IMA event dispatcher available through the ' +
-					'$Dispatcher property');
+					'$Dispatcher property'
+				);
+			}
 		}
 
 		if (
@@ -124,7 +131,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 * The listener will automatically have its {@code this} context bound
 	 * to this instance.
 	 *
-	 * @param {(ReactComponent|EventTarget)} eventTarget The event target
+	 * @param {(React.Component|EventTarget)} eventTarget The event target
 	 *        at which the event is to be listened for.
 	 * @param {string} eventName The name of the event to listen for.
 	 * @param {function(Event)} listener The listener to register.
@@ -152,7 +159,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 *
 	 * The method has no effect if the listener is not registered.
 	 *
-	 * @param {(ReactComponent|EventTarget)} eventTarget The event target
+	 * @param {(React.Component|EventTarget)} eventTarget The event target
 	 *        at which the event was listened for.
 	 * @param {string} eventName The name of the event listened for.
 	 * @param {function(Event)} listener The listener to deregister.
@@ -186,8 +193,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 * The listener will automatically have its {@code this} context bound
 	 * to this instance.
 	 *
-	 * @method listen
-	 * @param {(ReactElement|EventTarget)} eventTarget The react component
+	 * @param {(React.Element|EventTarget)} eventTarget The react component
 	 *        or event target at which the listener should listen for the
 	 *        event.
 	 * @param {string} eventName The name of the event for which to listen.
@@ -211,8 +217,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 * Deregisters the provided event listener for an IMA.js DOM custom
 	 * event of the specified name at the specified event target.
 	 *
-	 * @method unlisten
-	 * @param {(ReactElement|EventTarget)} eventTarget The react component
+	 * @param {(React.Element|EventTarget)} eventTarget The react component
 	 *        or event target at which the listener should listen for the
 	 *        event.
 	 * @param {string} eventName The name of the event for which to listen.
@@ -300,11 +305,12 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 */
 	setTimeout(callback, delay) {
 		if (this[PRIVATE.pendingTimeouts].has(callback)) {
-			throw new Error('The provided callback is already pending ' +
-					'to be executed. If you need to reschedule the ' +
-					'callback execution, clear the callback\'s ' +
-					'scheduled timeout execution using the ' +
-					'clearTimeout() method first');
+			throw new Error(
+				'The provided callback is already pending to be executed. ' +
+				'If you need to reschedule the callback execution, clear ' +
+				'the callback\'s scheduled timeout execution using the ' +
+				'clearTimeout() method first'
+			);
 		}
 
 		let timeoutId = setTimeout(() => {
@@ -347,11 +353,12 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 */
 	setInterval(callback, period) {
 		if (this[PRIVATE.activeIntervals].has(callback)) {
-			throw new Error('The provided callback is already ' +
-					'registered to be executed periodically. If you ' +
-					'need to reschedule the callback execution, clear ' +
-					'the callback\'s scheduled interval execution using ' +
-					'the clearInterval() method first');
+			throw new Error(
+				'The provided callback is already registered to be executed ' +
+				'periodically. If you need to reschedule the callback ' +
+				'execution, clear the callback\'s scheduled interval ' +
+				'execution using the clearInterval() method first'
+			);
 		}
 
 		let intervalId = setInterval(() => {
@@ -442,7 +449,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 *          function(Event),
 	 *          function(Event)
 	 *        >>>} listenerStorage The storage of the managed events.
-	 * @param {(ReactComponent|EventTarget)} eventTarget The event target
+	 * @param {(React.Component|EventTarget)} eventTarget The event target
 	 *        at which the event will be listened for.
 	 * @param {string} eventName The name of the event on which the
 	 *        listener is to be executed.
@@ -451,8 +458,9 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 * @return {?function(*)} The listener to pass to the underlying event
 	 *         API.
 	 */
-	[PRIVATE.registerListener](listenerStorage, eventTarget, eventName,
-			listener) {
+	[PRIVATE.registerListener](
+		listenerStorage, eventTarget, eventName, listener
+	) {
 		if (!eventTarget.addEventListener) {
 			eventTarget = ReactDOM.findDOMNode(eventTarget);
 		}
@@ -485,7 +493,7 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 *          function(Event),
 	 *          function(Event)
 	 *        >>>} listenerStorage The storage of the managed events.
-	 * @param {(ReactComponent|EventTarget)} eventTarget The event target
+	 * @param {(React.Component|EventTarget)} eventTarget The event target
 	 *        at which the event was listened for.
 	 * @param {string} eventName The name of the event on which the
 	 *        listener was to be executed.
@@ -495,8 +503,9 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 *         underlying event API, or {@code null} if the provided
 	 *         listener was not registered.
 	 */
-	[PRIVATE.deregisterListener](listenerStorage, eventTarget, eventName,
-			listener) {
+	[PRIVATE.deregisterListener](
+		listenerStorage, eventTarget, eventName, listener
+	) {
 		if (!eventTarget.addEventListener) {
 			eventTarget = ReactDOM.findDOMNode(eventTarget);
 		}
@@ -529,24 +538,31 @@ export default class AbstractManagedComponent extends AbstractComponent {
 	 * Post-processes the react element tree generated by this component's
 	 * {@linkcode render} method by binding all event listeners
 	 *
-	 * @param {ReactElement} reactElement The root react element craeted by
+	 * @param {React.Element} reactElement The root react element created by
 	 *        this component's render() method.
-	 * @return {ReactElement} The post-processed tree of react elements.
+	 * @return {React.Element} The post-processed tree of react elements.
 	 */
 	[PRIVATE.bindUiEventListeners](reactElement) {
-		let clone = Object.assign({}, reactElement);
-		Object.defineProperty(clone, '_self', {
-			enumerable: false,
-			configurable: false,
-			value: reactElement._self
-		});
-		Object.defineProperty(clone, '_source', {
-			enumerable: false,
-			configurable: false,
-			value: reactElement._source
-		});
+		let clone;
+		let props;
+		if (Object.isFrozen(reactElement)) {
+			clone = Object.assign({}, reactElement);
+			Object.defineProperty(clone, '_self', {
+				enumerable: false,
+				configurable: false,
+				value: reactElement._self
+			});
+			Object.defineProperty(clone, '_source', {
+				enumerable: false,
+				configurable: false,
+				value: reactElement._source
+			});
+			props = Object.assign({}, clone.props);
+		} else {
+			clone = reactElement;
+			props = clone.props;
+		}
 
-		let props = Object.assign({}, clone.props);
 		for (let propertyName of Object.keys(props)) {
 			if (
 				(propertyName.substring(0, 2) !== 'on') ||
@@ -568,7 +584,12 @@ export default class AbstractManagedComponent extends AbstractComponent {
 			);
 		}
 
-		clone.props = Object.freeze(props);
-		return Object.freeze(clone);
+		clone.props = props;
+		if ($Debug) {
+			Object.freeze(clone);
+			Object.freeze(clone.props);
+		}
+
+		return clone;
 	}
 }
