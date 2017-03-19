@@ -2,6 +2,8 @@
 import AbstractComponent from 'ima/page/AbstractComponent';
 import ReactDOM from 'react-dom';
 
+const IS_AT_CLIENT_SIDE = typeof window !== 'undefined';
+
 /**
  * Private field symbols.
  *
@@ -70,12 +72,12 @@ export default class AbstractManagedComponent extends AbstractComponent {
 			};
 		}
 
-		let currentRender = this.render;
-		this.render = () => {
-			return this[PRIVATE.bindUiEventListeners](
+		if (IS_AT_CLIENT_SIDE) {
+			let currentRender = this.render;
+			this.render = () => this[PRIVATE.bindUiEventListeners](
 				currentRender.call(this)
 			);
-		};
+		}
 
 		/**
 		 * Storage of the registered DOM event listeners.
