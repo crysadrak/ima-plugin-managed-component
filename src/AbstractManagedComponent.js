@@ -619,6 +619,17 @@ export default class AbstractManagedComponent extends AbstractComponent {
 			clone.props = props;
 		}
 
+		if (typeof clone.ref === 'function') {
+			let boundCallback;
+			if (this[PRIVATE.boundListeners].has(clone.ref)) {
+				boundCallback = this[PRIVATE.boundListeners].get(clone.ref);
+			} else {
+				boundCallback = clone.ref.bind(this);
+				this[PRIVATE.boundListeners].set(clone.ref, boundCallback);
+			}
+			clone.ref = boundCallback;
+		}
+
 		if ($Debug) {
 			Object.freeze(clone);
 			Object.freeze(clone.props);
